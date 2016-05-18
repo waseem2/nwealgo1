@@ -1,1 +1,154 @@
 # nwealgo1
+ package Akramw;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+ 
+public class Prims {
+	
+	    private boolean unvisted[];
+	    private boolean visted[];
+	    private int nv;
+	    private int adjacencyMatrix[][];
+	    private int key[];
+	    public static final int INFINITE = 999;
+	    private int main[];
+	 
+	    public Prims(int nv)
+	    {
+	        this.nv = nv;
+	        unvisted = new boolean[ nv + 1];
+	        visted = new boolean[nv + 1];
+	        adjacencyMatrix = new int[nv + 1][nv + 1];
+	        key = new int[nv + 1];
+	        main = new int[nv + 1];
+	    }
+	 
+	    public int getUnvistedCount(boolean unvisted[])
+	    {
+	        int count = 0;
+	        for (int index = 0; index < unvisted.length; index++)
+	        {
+	            if (unvisted[index])
+	            {
+	                count++;
+	            }
+	        }
+	        return count;
+	    }
+	 
+	    public void primsAlgorithm(int adjacencyMatrix[][])
+	    {
+	        int corVertex;
+	        for (int source = 1; source <= nv; source++)
+	        {
+	            for (int dest= 1; dest<= nv; dest++)
+	            {
+	                this.adjacencyMatrix[source][dest] = adjacencyMatrix[source][dest];
+	            }
+	        }
+	 
+	        for (int index = 1; index <= nv; index++)
+	        {
+	            key[index] = INFINITE;
+	        }
+	        key[1] = 0;
+	        unvisted[1] = true;
+	        main[1] = 1;
+	 
+	        while (getUnvistedCount(unvisted) != 0)
+	        {
+	            corVertex = getMimumKeyVertexFromUnvisted(unvisted);
+	            unvisted[corVertex] = false;
+	            visted[corVertex] = true;
+	            corNeighbours(corVertex);
+	        }
+	    } 
+	 
+	    private int getMimumKeyVertexFromUnvisted(boolean[] unvisted2)
+	    {
+	        int min = Integer.MAX_VALUE;
+	        int node = 0;
+	        for (int vertex = 1; vertex <= nv; vertex++)
+	        {
+	            if (unvisted[vertex] == true && key[vertex] < min)
+	            {
+	                node = vertex;
+	                min = key[vertex];
+	            }
+	        }
+	        return node;
+	    }
+	 
+	    public void corNeighbours(int corVertex)
+	    {
+	 
+	        for (int destinationvertex = 1; destinationvertex <= nv; destinationvertex++)
+	        {
+	            if (visted[destinationvertex] == false)
+	            {
+	                if (adjacencyMatrix[corVertex][destinationvertex] != INFINITE)
+	                {
+	                    if (adjacencyMatrix[corVertex][destinationvertex] < key[destinationvertex])
+	                    {
+	                        key[destinationvertex] = adjacencyMatrix[corVertex][destinationvertex];
+	                        main[destinationvertex] = corVertex;
+	                    }
+	                    unvisted[destinationvertex] = true;
+	                }
+	            }
+	        }
+	    }
+	 
+	    public void printMST()
+	    {
+	        System.out.println("SOURCE  : DESTINATION = WEIGHT");
+	        for (int vertex = 2; vertex <= nv; vertex++)
+	        {
+	            System.out.println(main[vertex] + "\t:\t" + vertex +"\t=\t"+ adjacencyMatrix[main[vertex]][vertex]);
+	        }
+	    }
+	 
+	    public static void main(String... arg)
+	    {
+	        int adjacency_matrix[][];
+	        int number_of_vertices;
+	        Scanner scan = new Scanner(System.in);
+	 
+	        try
+	        {
+	            System.out.println("Enter the number of vertices");
+	            number_of_vertices = scan.nextInt();
+	            adjacency_matrix = new int[number_of_vertices + 1][number_of_vertices + 1];
+	 
+	            System.out.println("Enter the Weighted Matrix for the graph");
+	            for (int i = 1; i <= number_of_vertices; i++)
+	            {
+	                for (int j = 1; j <= number_of_vertices; j++)
+	                {
+	                    adjacency_matrix[i][j] = scan.nextInt();
+	                    if (i == j)
+	                    {
+	                        adjacency_matrix[i][j] = 0;
+	                        continue;
+	                    }
+	                    if (adjacency_matrix[i][j] == 0)
+	                    {
+	                        adjacency_matrix[i][j] = INFINITE;
+	                    }
+	                }
+	            }
+	 
+	            Prims prims = new Prims(number_of_vertices);
+	            prims.primsAlgorithm(adjacency_matrix);
+	            prims.printMST();
+	 
+	        } catch (InputMismatchException inputMismatch)
+	        {
+	            System.out.println("Wrong Input Format");
+	        }
+	        scan.close();
+	    }
+	}
+
+
+ 
